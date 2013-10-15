@@ -1,0 +1,26 @@
+{
+    "name": "positivezero/adzerk",
+    "type": "library",
+    "description": "The PHP client for Adzerk REST API",
+    "keywords": ["adzerk", "api", "client", "php", "library"],
+    "homepage": "https://github.com/positivezero/adzerk",
+    "license": ["Apache License 2.0"],
+    "authors": [
+        {
+	    "name": "Vojtěch Kijenský",
+	    "homepage" : "http://www.positivezero.co.uk",
+        },
+        {
+            "name": "hubail",
+            "homepage": "https://github.com/hubail/AdZerk-PHP-Client"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.3.0",
+        "ext-curl": "*"
+    },
+    "autoload": {
+        "classmap": ["src/"]
+    }
+}
