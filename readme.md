@@ -1,4 +1,4 @@
-#adzerk
+#adzerk - ALPHA DO NOT USE!
 
 ####PHP Client for Adzerk REST API
 
