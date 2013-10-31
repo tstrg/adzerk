@@ -13,7 +13,6 @@
  */
 
 namespace Positivezero;
-use Nette\Utils\Strings;
 use Positivezero\Adzerk\InvalidArgumentException;
 use Positivezero\Adzerk\Wrappers;
 
@@ -23,25 +22,28 @@ use Positivezero\Adzerk\Wrappers;
  * @author Vojtěch Kijenský <vojtech@positivezero.co.uk>
  *
  * @link https://github.com/adzerk/adzerk-api/wiki/
- * @property Rest login
- * @property Rest report
- * @property Rest advertiser
- * @property Rest site
- * @property Rest channelSite
- * @property Wrappers\Channel channel
- * @property Rest adtypes
- * @property Rest priority
- * @property Rest campaign
- * @property Rest flight
- * @property Rest payments
+ * @method Wrappers\Advertiser advertiser
+ * @method Wrappers\Campaign campaign
+ * @method Wrappers\Channel channel
+ * @method Wrappers\Creative creative
+ * @method Wrappers\Flight flight
+ * @method Wrappers\Map map
+ * @method Wrappers\Priority priority
+ * @method Wrappers\Publisher publisher
+ * @method Wrappers\Site site
+ * @method Wrappers\Zone zone
  */
 class Adzerk
 {
 	private $apiKey;
-	private $apiBase = 'http://api.adzerk.net/v1';
+	private $apiUrl;
 
 	public function __construct($key)
 	{
+		$this->apiUrl = array(
+			'v1' => 'http://api.adzerk.net/v1',
+			'v2' => 'http://engine.adzerk.net/v2'
+		);
 		$this->apiKey = $key;
 	}
 
@@ -50,13 +52,17 @@ class Adzerk
 	 * @return Adzerk\Wrapper
 	 * @throws Adzerk\InvalidArgumentException
 	 */
-	public function __get($method)
+	public function __call($method, $args)
 	{
 		$class = '\\Positivezero\\Adzerk\\Wrappers\\'.$this->firstUpper($method);
 		if (class_exists($class)) {
-			return new $class(new Rest($method, $this->apiBase, array(
-				'X-Adzerk-ApiKey' => $this->apiKey
-			)));
+			$request = new RestClient(array(
+				'base_url' => $this->apiUrl['v1'],
+				'headers' => array(
+					'X-Adzerk-ApiKey'=>$this->apiKey
+				)
+			));
+			return new $class($request, isset($args[0]) ? $args[0] : null,  isset($args[1]) ? $args[1] : null );
 		}
 		throw new InvalidArgumentException($class . ' not found!');
 	}

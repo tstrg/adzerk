@@ -23,6 +23,29 @@ use Positivezero\Rest;
  *
  * @author Vojtěch Kijenský <vojtech@positivezero.co.uk>
  *
+ * example:
+ * List:
+ *      $o = $this->adzerk->advertiser();
+ *		$r = $o->get();
+
+ * Get item:
+ *      $o = $this->adzerk->advertiser(30083);
+ *		$r = $o->get();
+ *
+ * Create:
+ *		$o = $this->adzerk->advertiser();
+ *		$o->Title = 'Advertiser name';
+ *		$r = $o->create();
+ *
+ * Update:
+ *		$o = $this->adzerk->advertiser(37343);
+ *		$o->Title = 'New advertiser name';
+ *		$r = $o->update();
+ *
+ * Remove:
+ *		$o = $this->adzerk->advertiser(37343);
+ *		$r = $o->delete();
+ *
  * @property int Id
  * @property string Title
  * @property bool IsDeleted
@@ -30,10 +53,4 @@ use Positivezero\Rest;
  */
 class Advertiser extends Wrapper
 {
-
-	function __construct(Rest $rest)
-	{
-		parent::__construct($rest, 'advertiser');
-	}
-
 }

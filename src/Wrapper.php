@@ -15,6 +15,7 @@
 namespace Positivezero\Adzerk;
 
 use Positivezero\Rest;
+use Positivezero\RestClient;
 
 /**
  * You can easily create object for adzerk API endpoint. String representation of this class will generate
@@ -28,21 +29,26 @@ use Positivezero\Rest;
 class Wrapper
 {
 	/** @var \stdClass */
-	private $data;
-	/** @var string */
-	private $name;
-	/** @var \Positivezero\Rest */
-	protected $rest;
+	protected $data;
+
+	protected $id;
+
+	/** @var bool|string override wrapper rest method  */
+	protected $method = false;
+
+	protected $request;
 
 	/**
 	 * name of method, will be called by REST
-	 * @param $name
+	 * @param array $url
+	 * @param string $key
 	 */
-	function __construct(Rest $rest, $name)
+	function __construct(RestClient $request, $id)
 	{
-		$this->rest = $rest;
+		$this->id = $id;
+		$this->data['Id'] = $id;
+		$this->request = $request;
 		$this->data = new \stdClass();
-		$this->name = $name;
 	}
 
 	public function __get($key)
@@ -66,7 +72,7 @@ class Wrapper
 
 	public function __toString()
 	{
-		return $this->name . '=' . json_encode($this->data);
+		return $this->getRestMethod() . '=' . json_encode($this->data);
 	}
 
 	/**
@@ -89,28 +95,55 @@ class Wrapper
 		return true;
 	}
 
-	public function get($parameter = null)
+	/**
+	 * call rest type PUT to adzerk api
+	 * You must send all properties, because adzerk remove some property, if they are not defined again.
+	 * @return RestClient
+	 */
+	public function update()
 	{
-		return $this->rest->get($parameter);
+		// load default data
+		$object = $this->get();
+		$tmp = (array)$object;
+		// and override with users data
+		foreach ($this->data as $key => $value) {
+			$tmp[$key] = $value;
+		}
+		$this->data = $tmp;
+		// save all properties again
+		$response = $this->request->put($this->getRestMethod() . '/' . $this->data['Id'], (string)$this);
+		return $response->decoded_response;
 	}
 
-	public function put()
+	/**
+	 * call rest type GET to adzerk API
+	 * @return mixed
+	 */
+	public function get()
 	{
-//		$this->validate();
-		return $this->rest->put($this->Id, $this);
+		$query = '';
+		if (is_numeric($this->id)) {
+			$query = '/' . $this->id;
+		}
+		$response = $this->request->get($this->getRestMethod() . $query);
+		return $response->decoded_response;
 	}
 
-	public function post()
+	/**
+	 * call rest type POST to adzerk api
+	 * @return RestClient
+	 */
+	public function create()
 	{
-//		$this->validate();
-		return $this->rest->post(null, $this);
+		$response = $this->request->post($this->getRestMethod(), (string)$this);
+		return $response->decoded_response;
 	}
 
-	public function delete($Id)
+
+	public function delete()
 	{
-		throw new InvalidArgumentException('This wrapped object "' . $this->firstUpper($this->name) . '" has no method delete!
-			Method must be declared in wrapped object "Wrapper\\' . $this->firstUpper($this->name) . '"!
-		');
+		$response = $this->request->get($this->getRestMethod() . '/' . $this->id . '/delete');
+		return $response->decoded_response;
 	}
 
 	/**
@@ -118,9 +151,20 @@ class Wrapper
 	 * @param  string  UTF-8 encoding
 	 * @return string
 	 */
-	public static function firstUpper($s)
+	public function firstUpper($s)
 	{
 		return mb_strtoupper((mb_substr($s, 0, 1, 'UTF-8')), 'UTF-8') . mb_substr($s, 1, strlen(utf8_decode($s)), 'UTF-8');
+	}
+
+	/**
+	 * create method from class, which is passed to rest query
+	 * @return string
+	 */
+	public function getRestMethod()
+	{
+		if ($this->method) return $this->method;
+		$name = explode('\\', get_called_class());
+		return strtolower($name[count($name) - 1]);
 	}
 
 }

@@ -24,38 +24,31 @@ use Positivezero\Rest;
  *
  * example:
  * List:
- *  	$o = $this->adzerk->channel();
+ *  	$o = $this->adzerk->zone();
  *		$r = $o->get();
  *
  * Get one item:
- *  	$o = $this->adzerk->channel(13468);
+ *  	$o = $this->adzerk->zone(13468);
  *		$r = $o->get();
- *
- * Create:
- *		$o = $this->adzerk->channel();
- *		$o->Engine = 'CPM';
- *		$o->AdTypes = [1,3,4];
- *		$o->CPM = 10;
- *		$o->Title = 'My channel';
- *		$r = $o->create();
  *
  * Update:
- *		$o = $this->adzerk->channel(13468);
- *		$r = $o->get();
- *		$o->Title = 'My updated channel title';
- *		$r = $o->update();
+ *  	$o = $this->adzerk->zone(52885);
+ *      $o->Name = 'Default zone';
+ *      $r = $o->update();
+ *
+ * Create:
+ *      $o = $this->adzerk->zone();
+ *      $o->Name = 'Default zone';
+ *      $r = $o->create();
  *
  * Delete:
- *		$o = $this->adzerk->channel(13468);
- *		$r = $o->delete();
- *
+ *      $o = $this->adzerk->zone(52878);
+ *      $r = $o->delete();
  *
  * @property int Id
- * @property string Title
- * @property array AdTypes
- * @property string Engine
- * @property float CPM
+ * @property string Name
+ * @property int SiteId
  */
-class Channel extends Wrapper
+class Zone extends Wrapper
 {
 }
