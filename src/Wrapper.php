@@ -97,7 +97,7 @@ class Wrapper
 
 	/**
 	 * call rest type PUT to adzerk api
-	 * You must send all properties, because adzerk remove some property, if they are not defined again.
+	 * You must send all properties, because adzerk will remove properties, if they are not defined again.
 	 * @return RestClient
 	 */
 	public function update()
@@ -125,7 +125,7 @@ class Wrapper
 		if (is_numeric($this->id)) {
 			$query = '/' . $this->id;
 		}
-		$response = $this->request->get($this->getRestMethod() . $query);
+		$response = $this->afterGet($this->request->get($this->getRestMethod() . $query));
 		return $response->decoded_response;
 	}
 
@@ -165,6 +165,17 @@ class Wrapper
 		if ($this->method) return $this->method;
 		$name = explode('\\', get_called_class());
 		return strtolower($name[count($name) - 1]);
+	}
+
+	/**
+	 * This method enable executing code immediately after get() is called
+	 * Can be used to parsing/validating response code;
+	 * @param RestClient $response
+	 * @return RestClient
+	 */
+	protected function afterGet(RestClient $response)
+	{
+		return $response;
 	}
 
 }

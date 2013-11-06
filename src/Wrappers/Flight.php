@@ -16,6 +16,7 @@ namespace Positivezero\Adzerk\Wrappers;
 
 use Positivezero\Adzerk\Wrapper;
 use Positivezero\Rest;
+use Positivezero\RestClient;
 
 /**
  * Wrapped object for defining and validating required properties, using magic call
@@ -104,4 +105,15 @@ use Positivezero\Rest;
  * */
 class Flight extends Wrapper
 {
+
+	protected function afterGet(RestClient $response)
+	{
+		$keys = array('DatePartingStartTime', 'DatePartingEndTime');
+		foreach($keys as $key) {
+			if (isset($response->decoded_response->$key)) {
+				$response->decoded_response->$key = preg_replace('/\.(.*)/','',$response->decoded_response->$key);
+			}
+		}
+		return $response;
+	}
 }
