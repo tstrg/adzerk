@@ -43,6 +43,10 @@ class Serve
 				'Content-Type'	=> 'application/json'
 			)
 		));
+		// html decoder accept adzerk error messages, we need no parser here
+		$request->register_decoder('html',function($data){
+			return $data;
+		});
 		$example = '{"placements":[{"divName":"div1","networkId":4161,"siteId":20022,"adTypes":[5]}],"user":{"key":"abc"}}';
 		$response = $request->post(
 			$this->apiUrl,

@@ -27,11 +27,14 @@ use Positivezero\Adzerk\Wrappers;
  * @method Wrappers\Channel channel
  * @method Wrappers\Creative creative
  * @method Wrappers\Flight flight
+ * @method Wrappers\Earnings earnings
+ * @method Wrappers\Payments payments
  * @method Wrappers\Map map
  * @method Wrappers\Priority priority
  * @method Wrappers\Publisher publisher
  * @method Wrappers\Site site
  * @method Wrappers\Zone zone
+ * @throws Adzerk Exception
  */
 class Adzerk
 {
@@ -48,7 +51,8 @@ class Adzerk
 	}
 
 	/**
-	 * @param method
+	 * @param $method
+	 * @param $args
 	 * @return Adzerk\Wrapper
 	 * @throws Adzerk\InvalidArgumentException
 	 */
@@ -62,6 +66,10 @@ class Adzerk
 					'X-Adzerk-ApiKey'=>$this->apiKey
 				)
 			));
+			// html decoder accept adzerk error messages, we need no parser here
+			$request->register_decoder('html', function($data){
+				return $data;
+			});
 			return new $class($request, isset($args[0]) ? $args[0] : null,  isset($args[1]) ? $args[1] : null );
 		}
 		throw new InvalidArgumentException($class . ' not found!');

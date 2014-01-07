@@ -14,6 +14,7 @@
 
 namespace Positivezero\Adzerk\Wrappers;
 
+use Positivezero\Adzerk\RequestException;
 use Positivezero\Adzerk\NotImplementedException;
 use Positivezero\Adzerk\Wrapper;
 use Positivezero\Rest;
@@ -62,20 +63,29 @@ class SiteZoneTargeting extends Wrapper
 	/**
 	 * call rest type GET to adzerk API
 	 * @return mixed
+	 * @throws RequestException
 	 */
 	public function get()
 	{
-		if (!is_numeric($this->id)) {
-			$response = $this->request->get('flight/' . $this->idFlight . '/sitezonetargeting');
-		} else {
-			$response = $this->request->get('flight/' . $this->idFlight . '/sitezonetargeting/' . $this->id);
+		try {
+			if (!is_numeric($this->id)) {
+				$response = $this->request->get('flight/' . $this->idFlight . '/sitezonetargeting');
+			} else {
+				$response = $this->request->get('flight/' . $this->idFlight . '/sitezonetargeting/' . $this->id);
+			}
+			return $response->decoded_response;
+		} catch (Rest\RestClientException $e) {
+			throw new RequestException($e->getMessage(),null,$e);
 		}
-		return $response->decoded_response;
 	}
 
 	public function delete()
 	{
+		try {
 		$response = $this->request->get('flight/' . $this->idFlight . '/sitezonetargeting/' . $this->id . '/delete');
 		return $response->decoded_response;
+		} catch (Rest\RestClientException $e) {
+			throw new RequestException($e->getMessage(),null,$e);
+		}
 	}
 }

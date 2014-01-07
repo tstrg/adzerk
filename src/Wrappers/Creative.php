@@ -14,6 +14,7 @@
 
 namespace Positivezero\Adzerk\Wrappers;
 
+use Positivezero\Adzerk\RequestException;
 use Positivezero\Adzerk\Wrapper;
 use Positivezero\Rest;
 use Positivezero\RestClient;
@@ -79,6 +80,7 @@ class Creative extends Wrapper
 	/**
 	 * call rest type GET to adzerk API
 	 * @return mixed
+	 * @throws RequestException
 	 */
 	public function get()
 	{
@@ -86,12 +88,17 @@ class Creative extends Wrapper
 		if (is_numeric($this->id)) {
 			$query = '/' . $this->id;
 		}
-		if ($this->idAdvertiser) {
-			$response = $this->request->get('advertiser/' . $this->idAdvertiser . '/creatives' . $query);
-		} else {
-			$response = $this->request->get('/creative' . $query);
+		try {
+			if ($this->idAdvertiser) {
+				$response = $this->request->get('advertiser/' . $this->idAdvertiser . '/creatives' . $query);
+			} else {
+				$response = $this->request->get('/creative' . $query);
+			}
+			return $response->decoded_response;
+		} catch (Rest\RestClientException $e) {
+			throw new RequestException($e->getMessage(),null,$e);
 		}
-		return $response->decoded_response;
+
 	}
 
 

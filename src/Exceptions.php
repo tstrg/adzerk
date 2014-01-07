@@ -16,8 +16,10 @@ namespace Positivezero\Adzerk;
 
 class Exception extends \Exception {}
 
-class InvalidArgumentException extends \Exception {}
+class RequestException extends Exception {}
 
-class BadRequestException extends \Exception {}
+class InvalidArgumentException extends Exception {}
 
-class NotImplementedException extends \Exception{}
+class BadRequestException extends Exception {}
+
+class NotImplementedException extends Exception{}

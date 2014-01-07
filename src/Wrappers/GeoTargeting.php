@@ -14,6 +14,7 @@
 
 namespace Positivezero\Adzerk\Wrappers;
 
+use Positivezero\Adzerk\RequestException;
 use Positivezero\Adzerk\NotImplementedException;
 use Positivezero\Adzerk\Wrapper;
 use Positivezero\Rest;
@@ -63,11 +64,16 @@ class GeoTargeting extends Wrapper
 	/**
 	 * call rest type GET to adzerk API
 	 * @return mixed
+	 * @throws RequestException
 	 */
 	public function get()
 	{
 		if (is_numeric($this->id)) {
-			$response = $this->request->get('flight/' . $this->idFlight . '/' . $this->method . '/' . $this->id);
+			try {
+				$response = $this->request->get('flight/' . $this->idFlight . '/' . $this->method . '/' . $this->id);
+			} catch (Rest\RestClientException $e) {
+				throw new RequestException($e->getMessage(),null,$e);
+			}
 		} else {
 			return false;
 		}
@@ -76,7 +82,11 @@ class GeoTargeting extends Wrapper
 
 	public function delete()
 	{
-		$response = $this->request->get('flight/' . $this->idFlight . '/' . $this->method . '/' . $this->id . '/delete');
+		try {
+			$response = $this->request->get('flight/' . $this->idFlight . '/' . $this->method . '/' . $this->id . '/delete');
+		} catch (Rest\RestClientException $e) {
+			throw new RequestException($e->getMessage(),null,$e);
+		}
 		return $response->decoded_response;
 	}
 }

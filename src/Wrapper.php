@@ -40,8 +40,8 @@ class Wrapper
 
 	/**
 	 * name of method, will be called by REST
-	 * @param array $url
-	 * @param string $key
+	 * @param RestClient $request
+	 * @param $id
 	 */
 	function __construct(RestClient $request, $id)
 	{
@@ -99,6 +99,7 @@ class Wrapper
 	 * call rest type PUT to adzerk api
 	 * You must send all properties, because adzerk will remove properties, if they are not defined again.
 	 * @return RestClient
+	 * @throws RequestException
 	 */
 	public function update()
 	{
@@ -111,13 +112,18 @@ class Wrapper
 		}
 		$this->data = $tmp;
 		// save all properties again
-		$response = $this->request->put($this->getRestMethod() . '/' . $this->data['Id'], (string)$this);
-		return $response->decoded_response;
+		try {
+			$response = $this->request->put($this->getRestMethod() . '/' . $this->data['Id'], (string)$this);
+			return $response->decoded_response;
+		} catch (Rest\RestClientException $e) {
+			throw new RequestException($e->getMessage());
+		}
 	}
 
 	/**
 	 * call rest type GET to adzerk API
 	 * @return mixed
+	 * @throws RequestException
 	 */
 	public function get()
 	{
@@ -125,25 +131,42 @@ class Wrapper
 		if (is_numeric($this->id)) {
 			$query = '/' . $this->id;
 		}
-		$response = $this->afterGet($this->request->get($this->getRestMethod() . $query));
-		return $response->decoded_response;
+		try {
+			$response = $this->afterGet($this->request->get($this->getRestMethod() . $query));
+			return $response->decoded_response;
+		} catch (Rest\RestClientException $e) {
+			throw new RequestException($e->getMessage());
+		}
 	}
 
 	/**
 	 * call rest type POST to adzerk api
 	 * @return RestClient
+	 * @throws RequestException
 	 */
 	public function create()
 	{
-		$response = $this->request->post($this->getRestMethod(), (string)$this);
-		return $response->decoded_response;
+		try{
+			$response = $this->request->post($this->getRestMethod(), (string)$this);
+			return $response->decoded_response;
+		} catch (Rest\RestClientException $e) {
+			throw new RequestException($e->getMessage());
+		}
 	}
 
 
+	/**
+	 * @return mixed
+	 * @throws RequestException
+	 */
 	public function delete()
 	{
-		$response = $this->request->get($this->getRestMethod() . '/' . $this->id . '/delete');
-		return $response->decoded_response;
+		try {
+			$response = $this->request->get($this->getRestMethod() . '/' . $this->id . '/delete');
+			return $response->decoded_response;
+		} catch (Rest\RestClientException $e) {
+			throw new RequestException($e->getMessage());
+		}
 	}
 
 	/**

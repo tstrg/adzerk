@@ -14,6 +14,7 @@
 
 namespace Positivezero\Adzerk\Wrappers;
 
+use Positivezero\Adzerk\RequestException;
 use Positivezero\Adzerk\NotImplementedException;
 use Positivezero\Adzerk\Wrapper;
 use Positivezero\Rest;
@@ -84,24 +85,34 @@ class Map extends Wrapper
 	/**
 	 * call rest type GET to adzerk API
 	 * @return mixed
+	 * @throws RequestException
 	 */
 	public function get()
 	{
-		if (!is_numeric($this->id)) {
-			$response = $this->request->get('flight/' . $this->idFlight . '/creatives');
-		} else {
-			$response = $this->request->get('flight/' . $this->idFlight . '/creative/' . $this->id);
+		try {
+			if (!is_numeric($this->id)) {
+				$response = $this->request->get('flight/' . $this->idFlight . '/creatives');
+			} else {
+				$response = $this->request->get('flight/' . $this->idFlight . '/creative/' . $this->id);
+			}
+			return $response->decoded_response;
+		} catch (Rest\RestClientException $e) {
+			throw new RequestException($e->getMessage(),null,$e);
 		}
-		return $response->decoded_response;
 	}
 
 	/**
 	 * @return RestClient
+	 * @throws RequestException
 	 */
 	public function create()
 	{
-		$response = $this->request->post('flight/' . $this->idFlight . '/creative', (string)$this);
-		return $response->decoded_response;
+		try {
+			$response = $this->request->post('flight/' . $this->idFlight . '/creative', (string)$this);
+			return $response->decoded_response;
+		} catch (Rest\RestClientException $e) {
+			throw new RequestException($e->getMessage(),null,$e);
+		}
 	}
 
 	public function update()
@@ -111,8 +122,12 @@ class Map extends Wrapper
 
 	public function delete()
 	{
-		$response = $this->request->get('flight/' . $this->idFlight . '/creative/' . $this->id . '/delete');
-		return $response->decoded_response;
+		try {
+			$response = $this->request->get('flight/' . $this->idFlight . '/creative/' . $this->id . '/delete');
+			return $response->decoded_response;
+		} catch (Rest\RestClientException $e) {
+			throw new RequestException($e->getMessage(),null,$e);
+		}
 	}
 
 }

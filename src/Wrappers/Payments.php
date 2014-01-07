@@ -23,36 +23,24 @@ use Positivezero\Rest;
  * @see \Positivezero\Adzerk\Wrapper;
  * @author Vojtěch Kijenský <vojtech@positivezero.co.uk>
  *
- * example:
- *
- * Create:
- *		$o = $this->adzerk->channelSite();
- * 		$o->ChannelId = 123456
- * 		$o->SiteId = 789
- * 		$o->Priority = 7
- *		$r = $o->create();
- *
- *
- * Delete:
- *		$o = $this->adzerk->channelSite();
- * 		$o->ChannelId = 123456
- * 		$o->SiteId = 789
- *		$r = $o->delete();
- *
- *
- * @property int Id
- * @property string Title
- * @property array AdTypes
- * @property string Engine
- * @property float CPM
+
+ * @property string StartDate
+ * @property string EndDate
+ * @property int SiteId
+ * @property int PublisherAccountId
  */
-class ChannelSite extends Wrapper
+class Payments extends Wrapper
 {
 
-	public function delete()
+	/**
+	 * call rest type GET to adzerk API
+	 * @return mixed
+	 * @throws RequestException
+	 */
+	public function get()
 	{
 		try {
-			$response = $this->request->get('channel/' . $this->ChannelId . '/site/' . $this->SiteId . '/delete');
+			$response = $this->request->post($this->getRestMethod(), (string)$this);
 			return $response->decoded_response;
 		} catch (Rest\RestClientException $e) {
 			throw new RequestException($e->getMessage(),null,$e);
