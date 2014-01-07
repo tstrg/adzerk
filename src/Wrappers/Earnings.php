@@ -38,7 +38,7 @@ class Earnings extends Wrapper
 	public function get()
 	{
 		try {
-			$response = $this->request->post('a'.$this->getRestMethod(), (string)$this);
+			$response = $this->request->post($this->getRestMethod(), (string)$this);
 			return $response->decoded_response;
 		} catch (Rest\RestClientException $e) {
 			throw new RequestException($e->getMessage(),null,$e);
