@@ -28,6 +28,7 @@ use Positivezero\Adzerk\Wrappers;
  * @method Wrappers\Creative creative
  * @method Wrappers\Flight flight
  * @method Wrappers\Earnings earnings
+ * @method Wrappers\Report report
  * @method Wrappers\Payments payments
  * @method Wrappers\Map map
  * @method Wrappers\Priority priority
