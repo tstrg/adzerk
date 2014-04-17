@@ -41,7 +41,8 @@ class Serve
 			'base_url' => self::ENDPOINT,
 			'headers' => array(
 				'Content-Type'	=> 'application/json'
-			)
+			),
+			'user_agent' => $_SERVER['HTTP_USER_AGENT'] //Adzerk need user agent for OS/Browser targeting
 		));
 		// html decoder accept adzerk error messages, we need no parser here
 		$request->register_decoder('html',function($data){
