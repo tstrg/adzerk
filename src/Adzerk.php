@@ -45,8 +45,8 @@ class Adzerk
 	public function __construct($key)
 	{
 		$this->apiUrl = array(
-			'v1' => 'http://api.adzerk.net/v1',
-			'v2' => 'http://engine.adzerk.net/v2'
+			'v1' => 'https://api.kevel.co/v1',
+			'v2' => 'https://api.kevel.co/v2'
 		);
 		$this->apiKey = $key;
 	}
@@ -60,17 +60,23 @@ class Adzerk
 	public function __call($method, $args)
 	{
 		$class = '\\Positivezero\\Adzerk\\Wrappers\\'.$this->firstUpper($method);
+		
 		if (class_exists($class)) {
 			$request = new RestClient(array(
 				'base_url' => $this->apiUrl['v1'],
 				'headers' => array(
-					'X-Adzerk-ApiKey'=>$this->apiKey
+					'X-Adzerk-ApiKey'=>$this->apiKey,
+					'Content-Type'=> 'application/json',
+					//'class'=>$class,
+					//'method'=>$method
 				)
 			));
+
 			// html decoder accept adzerk error messages, we need no parser here
 			$request->register_decoder('html', function($data){
 				return $data;
 			});
+
 			return new $class($request, isset($args[0]) ? $args[0] : null,  isset($args[1]) ? $args[1] : null );
 		}
 		throw new InvalidArgumentException($class . ' not found!');

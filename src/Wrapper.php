@@ -72,7 +72,8 @@ class Wrapper
 
 	public function __toString()
 	{
-		return $this->getRestMethod() . '=' . json_encode($this->data);
+		//return $this->getRestMethod() . '=' . json_encode($this->data);
+		return json_encode($this->data);
 	}
 
 	/**
@@ -185,8 +186,15 @@ class Wrapper
 	 */
 	public function getRestMethod()
 	{
+		//tstrg
+		if($this->method === 'channelSite') return $name[count($name) - 1];
+
 		if ($this->method) return $this->method;
 		$name = explode('\\', get_called_class());
+		
+		//tstrg
+		if($name[count($name) - 1] === 'ChannelSite') return 'channelSite';
+		
 		return strtolower($name[count($name) - 1]);
 	}
 
